@@ -22,6 +22,9 @@
  */
 
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Controls.impl
+import QtQuick.Controls.Basic
 import HuskarUI.Basic
 
 HusText {
@@ -52,6 +55,7 @@ HusText {
             width: control.iconSize
             height: control.iconSize
             sourceSize: Qt.size(width, height)
+            // Color overlay might be lost but it won't crash
         }
     }
 
