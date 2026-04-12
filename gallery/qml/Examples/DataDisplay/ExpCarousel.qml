@@ -34,7 +34,7 @@ Flickable {
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
 animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
-initModel | list | [] | 初始数据模型
+initModel | array | [] | 初始数据模型
 currentIndex | int | -1 | 当前索引
 position | enum | HusCarousel.Position_Bottom | 滚动的方向和指示器的位置(来自 HusCarousel)
 speed | int | 500 | 切换动效的时间(毫秒)
@@ -47,11 +47,11 @@ indicatorSpacing | int | 6 | 指示器间隔
 showArrow | bool | false | 是否显示箭头
 \n<br/>
 \n### 支持的函数：\n
-- \`swithTo(index: int, animated: bool = true)\` \n
+- \`switchTo(index: int, animated: bool = true)\` \n
   - \`index\` 要切换的目标处索引
   - \`animated\` 是否使用切换动效
-- \`swithToPrev()\` 切换到前一页 \n
-- \`swithToNext()\` 切换到后一页 \n
+- \`switchToPrev()\` 切换到前一页 \n
+- \`switchToNext()\` 切换到后一页 \n
 - \`int getSuitableIndicatorWidth(contentWidth: int, indicatorMaxWidth: int = 18)\` 获取合适的指示器宽度 \n
   - \`contentWidth\` 轮播内容的宽度
   - \`indicatorMaxWidth\` 指示器最大宽度

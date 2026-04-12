@@ -122,6 +122,10 @@ Flickable {
 - **rowHeaderDelegate: Component** 行头代理，代理可访问属性：\n
   - \`model: var\` 行模型数据\n
   - \`row: int\` 行索引\n
+- **columnHeaderTitleDelegate: Component** 列头标题代理，代理可访问属性：\n
+  - \`align: string\` 该列标题的对齐\n
+  - \`headerData: var\` 列描述数据(即columns[column])\n
+  - \`column: int\` 列索引\n
 - **columnHeaderSorterIconDelegate: Component** 列头搜索器图标代理，代理可访问属性：\n
   - \`sorter: var\` 该列的搜索器\n
   - \`sortDirections: list\` 该列的搜索方向数组\n
@@ -133,7 +137,7 @@ Flickable {
 \n### 支持的属性：\n
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
-animationEnabled | bool | true | 是否开启动画
+animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
 reuseItems | bool | false | 是否重用项目(具体参考官方文档)
 propagateWheelEvent | bool | false | 是否传播鼠标滚轮事件
 alternatingRow | bool | false | 是否交替显示行背景
@@ -141,13 +145,16 @@ defaultColumnHeaderHeight | int | 40 | 默认列头高度
 defaultRowHeaderWidth | int | 40 | 默认行头宽度
 showColumnGrid | bool | false | 是否显示列网格线
 showRowGrid | bool | false | 是否显示行网格线
+columnResizable | bool | true | 是否可调整列大小
+rowResizable | bool | true | 是否可调整行大小
 rowHeightProvider | function(row, key) | minimumRowHeight | 行高提供函数
 minimumRowHeight | int | 40 | 最小行高
 maximumRowHeight | int | Number.MAX_VALUE | 最大行高
-initModel | list | [] | 表格初始数据模型
+initModel | array | [] | 表格初始数据模型
 rowCount | int | 0 | 当前模型行数
-columns | list | [] | 列描述对象数组
-checkedKeys | list | [] | 选中行的键列表
+columns | array | [] | 列描述对象数组
+defaultCheckedKeys | array | [] | 默认选中的键列表
+checkedKeys | array | [] | 选中行的键列表
 colorGridLine | color | - | 网格线颜色
 showColumnHeader | bool | true | 是否显示列头
 columnHeaderTitleFont | font | - | 列头标题字体
@@ -158,10 +165,17 @@ rowHeaderTitleFont | font | - | 行头标题字体
 colorRowHeaderTitle | color | - | 行头标题颜色
 colorRowHeaderBg | color | - | 行头背景颜色
 colorResizeBlockBg | color | - | 调整头大小块(左上角方块)背景色
+radiusBg | [HusRadius](internal://HusRadius) | - | 背景圆角
 verScrollBar | [HusScrollBar](internal://HusScrollBar) | - | 访问内部垂直滚动条
 horScrollBar | [HusScrollBar](internal://HusScrollBar) | - | 访问内部水平滚动条
 tableView | TableView | - | 访问内部表格视图
 tableModel | TableModel | - | 访问内部表格模型
+\n<br/>
+\n### {initModel}支持的属性：\n
+属性名 | 类型 | 可选/必选 | 描述
+------ | --- | :---: | ---
+key | string | 可选 | 本行数据键
+enabled | bool | 可选 | 本行是否禁用
 \n<br/>
 \n### {columns}支持的属性：\n
 属性名 | 类型 | 可选/必选 | 描述
@@ -174,9 +188,9 @@ minimumWidth | int | 可选 | 该列最小宽度
 maximumWidth | int | 可选 | 该列最大宽度
 editable | bool | 可选 | 列头标题是否可编辑
 align | string | 可选 | 列头标题对齐方式, 支持 'center'丨'left'丨'right'
-selectionType | string | 可选 | 该列选择类型, 支持 'checkbox'
+selectionType | string | 可选 | 该列选择类型, 支持 'checkbox'丨'radio'
 sorter | var | 可选 | 该列排序器
-sortDirections | list | 可选 | 该列排序方向, 支持 'false'丨'ascend'丨'descend'
+sortDirections | array | 可选 | 该列排序方向, 支持 'false'丨'ascend'丨'descend'
 onFilter | var | 可选 | 该列过滤器
 filterInput | string | 可选 | 该列过滤输入
 \n<br/>
@@ -191,8 +205,11 @@ dataIndex | string | 数据索引
 filterInput | string | 单元格的过滤输入
 \n<br/>
 \n### 支持的函数：\n
+- \`setColumnVisible(dataIndex: string, visible: bool)\` 设置 \`dataIndex\` 对应列的可见为 \`visible\`。\n
 - \`checkForRows(rows: Array)\` 选中 \`rows\` 提供的行列表。\n
 - \`checkForKeys(keys: Array)\` 选中 \`keys\` 提供的键列表。\n
+- \`toggleForRows(rows: Array)\` 切换 \`rows\` 提供的行列表的选中状态。\n
+- \`toggleForKeys(keys: Array)\` 切换 \`keys\` 提供的键列表的选中状态。\n
 - \`Array getCheckedKeys()\` 获取选中的键列表。\n
 - \`clearAllCheckedKeys()\` 清除所有选中的键。\n
 - \`scrollToRow(row: int)\` 滚动到 \`row\` 指定的行。\n
@@ -376,9 +393,181 @@ filterInput | string | 单元格的过滤输入
 
         CodeBox {
             width: parent.width
+            descTitle: qsTr('显示/隐藏指定行')
+            desc: qsTr(`
+通过 \`setColumnVisible(dataIndex: string, visible: bool)\` 来切换显示指定行。\n
+                       `)
+            code: `
+                import QtQuick
+                import HuskarUI.Basic
+
+                Column {
+                    width: parent.width
+                    spacing: 10
+
+                    HusGroupBox {
+                        title: 'Check to column visible'
+                        padding: 20
+
+                        Row {
+                            spacing: 10
+
+                            HusCheckBox { checked: true; text: 'Name'; onToggled: columnVisibleTable.setColumnVisible('name', checked); }
+                            HusCheckBox { checked: true; text: 'Age'; onToggled: columnVisibleTable.setColumnVisible('age', checked); }
+                            HusCheckBox { checked: true; text: 'Address'; onToggled: columnVisibleTable.setColumnVisible('address', checked); }
+                            HusCheckBox { checked: true; text: 'Tags'; onToggled: columnVisibleTable.setColumnVisible('tags', checked); }
+                            HusCheckBox { checked: true; text: 'Action'; onToggled: columnVisibleTable.setColumnVisible('action', checked); }
+                        }
+                    }
+
+                    HusTableView {
+                        id: columnVisibleTable
+                        width: parent.width
+                        height: 200
+                        columns: [
+                            {
+                                title: 'Name',
+                                dataIndex: 'name',
+                                delegate: textDelegate,
+                                width: 200
+                            },
+                            {
+                                title: 'Age',
+                                dataIndex: 'age',
+                                delegate: textDelegate,
+                                width: 100
+                            },
+                            {
+                                title: 'Address',
+                                dataIndex: 'address',
+                                delegate: textDelegate,
+                                width: 300
+                            },
+                            {
+                                title: 'Tags',
+                                dataIndex: 'tags',
+                                delegate: tagsDelegate,
+                                width: 200
+                            },
+                            {
+                                title: 'Action',
+                                dataIndex: 'action',
+                                delegate: actionDelegate,
+                                width: 300
+                            }
+                        ]
+                        initModel: [
+                            {
+                                key: '1',
+                                name: 'John Brown',
+                                age: 32,
+                                address: 'New York No. 1 Lake Park',
+                                tags: ['nice', 'developer'],
+                            },
+                            {
+                                key: '2',
+                                name: 'Jim Green',
+                                age: 42,
+                                address: 'London No. 1 Lake Park',
+                                tags: ['loser'],
+                            },
+                            {
+                                key: '3',
+                                name: 'Joe Black',
+                                age: 32,
+                                address: 'Sydney No. 1 Lake Park',
+                                tags: ['cool', 'teacher'],
+                            }
+                        ]
+                    }
+                }
+            `
+            exampleDelegate: Column {
+                spacing: 10
+
+                HusGroupBox {
+                    title: 'Check to column visible'
+                    padding: 20
+
+                    Row {
+                        spacing: 10
+
+                        HusCheckBox { checked: true; text: 'Name'; onToggled: columnVisibleTable.setColumnVisible('name', checked); }
+                        HusCheckBox { checked: true; text: 'Age'; onToggled: columnVisibleTable.setColumnVisible('age', checked); }
+                        HusCheckBox { checked: true; text: 'Address'; onToggled: columnVisibleTable.setColumnVisible('address', checked); }
+                        HusCheckBox { checked: true; text: 'Tags'; onToggled: columnVisibleTable.setColumnVisible('tags', checked); }
+                        HusCheckBox { checked: true; text: 'Action'; onToggled: columnVisibleTable.setColumnVisible('action', checked); }
+                    }
+                }
+
+                HusTableView {
+                    id: columnVisibleTable
+                    width: parent.width
+                    height: 200
+                    columns: [
+                        {
+                            title: 'Name',
+                            dataIndex: 'name',
+                            delegate: textDelegate,
+                            width: 200
+                        },
+                        {
+                            title: 'Age',
+                            dataIndex: 'age',
+                            delegate: textDelegate,
+                            width: 100
+                        },
+                        {
+                            title: 'Address',
+                            dataIndex: 'address',
+                            delegate: textDelegate,
+                            width: 300
+                        },
+                        {
+                            title: 'Tags',
+                            dataIndex: 'tags',
+                            delegate: tagsDelegate,
+                            width: 200
+                        },
+                        {
+                            title: 'Action',
+                            dataIndex: 'action',
+                            delegate: actionDelegate,
+                            width: 300
+                        }
+                    ]
+                    initModel: [
+                        {
+                            key: '1',
+                            name: 'John Brown',
+                            age: 32,
+                            address: 'New York No. 1 Lake Park',
+                            tags: ['nice', 'developer'],
+                        },
+                        {
+                            key: '2',
+                            name: 'Jim Green',
+                            age: 42,
+                            address: 'London No. 1 Lake Park',
+                            tags: ['loser'],
+                        },
+                        {
+                            key: '3',
+                            name: 'Joe Black',
+                            age: 32,
+                            address: 'Sydney No. 1 Lake Park',
+                            tags: ['cool', 'teacher'],
+                        }
+                    ]
+                }
+            }
+        }
+
+        CodeBox {
+            width: parent.width
             descTitle: qsTr('自定义选择项')
             desc: qsTr(`
-通过 \`columns\` 对应列中的 \`selectionType\` 设置选择类型，目前支持 'checkbox' 多选框。\n
+通过 \`columns\` 对应列中的 \`selectionType\` 设置选择类型，目前支持 'checkbox' 多选框 / 'radio' 单选框。\n
 **注意** 设置多列 \`selectionType\` 行为未定义。\n
 通过 \`columns\` 对应列中的 \`editable\` 设置该列头是否可编辑。\n
 通过 \`scrollToRow()\` 滚动到指定行。\n
@@ -427,9 +616,9 @@ filterInput | string | 单元格的过滤输入
                         }
 
                         HusCheckBox {
+                            id: alternatingRowCheckBox
                             anchors.verticalCenter: parent.verticalCenter
                             text: qsTr('Switch alternatingRow')
-                            onClicked: tableView.alternatingRow = checked;
                         }
                     }
 
@@ -437,6 +626,7 @@ filterInput | string | 单元格的过滤输入
                         id: tableView
                         width: parent.width
                         height: 400
+                        alternatingRow: alternatingRowCheckBox.checked
                         columns: [
                             {
                                 title: 'Name',
@@ -495,6 +685,70 @@ filterInput | string | 单元格的过滤输入
                                         });
                         }
                     }
+
+                    HusTableView {
+                        id: tableView2
+                        width: parent.width
+                        height: 400
+                        alternatingRow: alternatingRowCheckBox.checked
+                        columns: [
+                            {
+                                title: 'Name',
+                                dataIndex: 'name',
+                                delegate: textDelegate,
+                                width: 200,
+                                minimumWidth: 100,
+                                maximumWidth: 400,
+                                align: 'center',
+                                selectionType: 'radio',
+                            },
+                            {
+                                title: 'Age',
+                                dataIndex: 'age',
+                                delegate: textDelegate,
+                                width: 100,
+                                editable: true,
+                            },
+                            {
+                                title: 'Address',
+                                dataIndex: 'address',
+                                delegate: textDelegate,
+                                width: 300
+                            },
+                            {
+                                title: 'Tags',
+                                dataIndex: 'tags',
+                                delegate: tagsDelegate,
+                                width: 350,
+                            },
+                            {
+                                title: 'Action',
+                                dataIndex: 'action',
+                                delegate: actionDelegate,
+                                width: 200
+                            }
+                        ]
+                    }
+
+                    HusPagination {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        total: 1000
+                        pageSize: 100
+                        showQuickJumper: true
+                        onCurrentPageIndexChanged: {
+                            /*! 生成一些数据 */
+                            tableView2.initModel = Array.from({ length: pageSize }).map(
+                                        (_, i) => {
+                                            return {
+                                                key: String(i + currentPageIndex * pageSize),
+                                                name: \`Edward King \${i + currentPageIndex * pageSize}\`,
+                                                age: i % 30 + 30,
+                                                address: \`London, Park Lane no. \${i + currentPageIndex * pageSize}\`,
+                                                tags: ['nice', 'cool', 'loser', 'teacher', 'developer'].splice(0, i % 5 + 1),
+                                            }
+                                        });
+                        }
+                    }
                 }
             `
             exampleDelegate: Column {
@@ -535,9 +789,9 @@ filterInput | string | 单元格的过滤输入
                     }
 
                     HusCheckBox {
+                        id: alternatingRowCheckBox
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr('Switch alternatingRow')
-                        onClicked: tableView.alternatingRow = checked;
                     }
                 }
 
@@ -545,6 +799,7 @@ filterInput | string | 单元格的过滤输入
                     id: tableView
                     width: parent.width
                     height: 400
+                    alternatingRow: alternatingRowCheckBox.checked
                     columns: [
                         {
                             title: 'Name',
@@ -592,6 +847,70 @@ filterInput | string | 单元格的过滤输入
                     onCurrentPageIndexChanged: {
                         /*! 生成一些数据 */
                         tableView.initModel = Array.from({ length: pageSize }).map(
+                                    (_, i) => {
+                                        return {
+                                            key: String(i + currentPageIndex * pageSize),
+                                            name: `Edward King ${i + currentPageIndex * pageSize}`,
+                                            age: i % 30 + 30,
+                                            address: `London, Park Lane no. ${i + currentPageIndex * pageSize}`,
+                                            tags: ['nice', 'cool', 'loser', 'teacher', 'developer'].splice(0, i % 5 + 1),
+                                        }
+                                    });
+                    }
+                }
+
+                HusTableView {
+                    id: tableView2
+                    width: parent.width
+                    height: 400
+                    alternatingRow: alternatingRowCheckBox.checked
+                    columns: [
+                        {
+                            title: 'Name',
+                            dataIndex: 'name',
+                            delegate: textDelegate,
+                            width: 200,
+                            minimumWidth: 100,
+                            maximumWidth: 400,
+                            align: 'center',
+                            selectionType: 'radio',
+                        },
+                        {
+                            title: 'Age',
+                            dataIndex: 'age',
+                            delegate: textDelegate,
+                            width: 100,
+                            editable: true,
+                        },
+                        {
+                            title: 'Address',
+                            dataIndex: 'address',
+                            delegate: textDelegate,
+                            width: 300
+                        },
+                        {
+                            title: 'Tags',
+                            dataIndex: 'tags',
+                            delegate: tagsDelegate,
+                            width: 350,
+                        },
+                        {
+                            title: 'Action',
+                            dataIndex: 'action',
+                            delegate: actionDelegate,
+                            width: 200
+                        }
+                    ]
+                }
+
+                HusPagination {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    total: 1000
+                    pageSize: 100
+                    showQuickJumper: true
+                    onCurrentPageIndexChanged: {
+                        /*! 生成一些数据 */
+                        tableView2.initModel = Array.from({ length: pageSize }).map(
                                     (_, i) => {
                                         return {
                                             key: String(i + currentPageIndex * pageSize),
@@ -767,8 +1086,8 @@ filterInput | string | 单元格的过滤输入
         int age;
         QVariantMap toVariant() {
             QVariantMap var;
-            var["name"] = myData.name;
-            var["age"] = myData.age;
+            var["name"] = name;
+            var["age"] = age;
             return var;
         }
     };
@@ -783,7 +1102,7 @@ filterInput | string | 单元格的过滤输入
     }
 \`\`\`\n
 3. 在 Qml 中直接访问该数据集并赋值给 HusTableView.initModel。\n
-\`\`\`auto
+\`\`\`qml
     HusTableView {
         Component.onCompleted: {
             initModel = getMyDataList();

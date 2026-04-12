@@ -47,22 +47,25 @@ reuseItems | bool | false | 是否重用项目(具体参考官方文档)
 checkable | bool | false | 是否添加[HusCheckbox](internal://HusCheckbox)复选框
 blockNode | bool | false | 节点内容是否填充整行
 genDefaultKey | bool | true | 未提供key时是否生成默认键(生成键形如'0-1-2...')
+forceUpdateCheckState | bool | false | 强制更新check状态(为true时将不受enabled/checkboxDisabled约束)
 indent | real | 18 | 缩进宽度
 showIcon | bool | false | 是否显示节点图标
 defaultNodeIconSize | int | 16 | 默认节点图标大小
 showLine | bool | false | 是否显示连接线
 lineStyle | enum | HusTreeView.SolidLine | 连接线样式(来自 HusTreeView)
 lineWidth | real | 1 | 连接线宽度
-dashPattern | list | [4, 4] | 连接线虚线模式
-switcherIconSouce | int丨string | HusIcon.CaretRightOutlined | 切换器图标源(来自 HusIcon)或图标链接
+dashPattern | array | [4, 4] | 连接线虚线模式
+switcherIconSource | int丨string | HusIcon.CaretRightOutlined | 切换器图标源(来自 HusIcon)或图标链接
 switcherIconSize | int | 12 | 切换器图标大小
 rowSpacing | real | 4 | 节点行之间的间隔
-defaultCheckedKeys | list | [] | 默认选中的键列表
-checkedKeys | list | [] | 选中的键列表
+defaultCheckedKeys | array | [] | 默认选中的键列表
+checkedKeys | array | [] | 选中的键列表
 selectedKey | string | '' | 当前选择的键(非复选框)
-initModel | list | [] | 初始模型
+initModel | array | [] | 初始模型
 titleFont | font | - | 节点标题文本字体
+nodeIconFont | font | - | 节点图标字体
 colorLine | color | - | 连接线颜色
+colorNodeIcon | color | - | 节点图标颜色
 radiusSwitcherBg | [HusRadius](internal://HusRadius) | - | 切换器背景圆角
 radiusTitleBg | [HusRadius](internal://HusRadius) | - | 节点标题背景圆角
 verScrollBar | [HusScrollBar](internal://HusScrollBar) | - | 访问内部垂直滚动条
@@ -78,7 +81,7 @@ key | string | 可选 | 本节点键
 enabled | bool | 可选 | 本节点是否启用(默认true)
 checkboxDisabled | bool | 可选 | 复选框是否禁用(默认false)
 delegateUrl | url | 可选 | 本节点代理的url(等同于Loader.source)
-children | list | 可选 | 子节点列表
+children | array | 可选 | 子节点列表
 \n<br/>
 \n### 支持的函数：\n
 - \`clear()\` 清空所有模型数据(包括initModel)。\n
@@ -368,7 +371,7 @@ children | list | 可选 | 子节点列表
             async: false
             descTitle: qsTr('自定义展开/折叠图标')
             desc: qsTr(`
-通过 \`switcherIconSouce\` 设置展开/折叠图标。\n
+通过 \`switcherIconSource\` 设置展开/折叠图标。\n
                        `)
             code: `
                 import QtQuick
@@ -379,7 +382,7 @@ children | list | 可选 | 子节点列表
 
                     HusTreeView {
                         showLine: true
-                        switcherIconSouce: HusIcon.DownOutlined
+                        switcherIconSource: HusIcon.DownOutlined
                         Component.onCompleted: expandForKeys(['0-0-0']);
                         initModel: [
                             {
@@ -439,7 +442,7 @@ children | list | 可选 | 子节点列表
 
                 HusTreeView {
                     showLine: true
-                    switcherIconSouce: HusIcon.RightOutlined
+                    switcherIconSource: HusIcon.RightOutlined
                     Component.onCompleted: expandForKeys(['0-0-0']);
                     initModel: [
                         {

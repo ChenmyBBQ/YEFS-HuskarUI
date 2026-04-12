@@ -21,7 +21,7 @@ if(WIN32)
         COMPANY "HuskarUI"
         DESCRIPTION ""
         VERSION "${PROJECT_VERSION}"
-        COPYRIGHT "Copyright (C) 2025 mengps. All rights reserved."
+        COPYRIGHT "Copyright (C) 2026 mengps. All rights reserved."
         ICONS ../resources/huskarui_new_square.ico
         OUTPUT_FILE "${GALLERY_RC_FILE}"
     )
@@ -54,6 +54,8 @@ qt_add_qml_module(${PROJECT_NAME}
         qml/Examples/General/ExpResizeMouseArea.qml
         qml/Examples/General/ExpRadius.qml
         qml/Examples/General/ExpLabel.qml
+        qml/Examples/General/ExpFrame.qml
+        qml/Examples/General/ExpPage.qml
         qml/Examples/DataEntry/ExpSwitch.qml
         qml/Examples/DataEntry/ExpSlider.qml
         qml/Examples/DataEntry/ExpSelect.qml
@@ -67,11 +69,13 @@ qt_add_qml_module(${PROJECT_NAME}
         qml/Examples/DataEntry/ExpInputInteger.qml
         qml/Examples/DataEntry/ExpInputNumber.qml
         qml/Examples/DataEntry/ExpMultiSelect.qml
+        qml/Examples/DataEntry/ExpMultiCheckBox.qml
         qml/Examples/DataEntry/ExpDateTimePicker.qml
         qml/Examples/DataEntry/ExpDateTimePickerPanel.qml
         qml/Examples/DataEntry/ExpTextArea.qml
         qml/Examples/DataEntry/ExpColorPickerPanel.qml
         qml/Examples/DataEntry/ExpColorPicker.qml
+        qml/Examples/DataEntry/ExpTransfer.qml
         qml/Examples/DataDisplay/ExpToolTip.qml
         qml/Examples/DataDisplay/ExpTourFocus.qml
         qml/Examples/DataDisplay/ExpTourStep.qml
@@ -91,6 +95,7 @@ qt_add_qml_module(${PROJECT_NAME}
         qml/Examples/DataDisplay/ExpQrCode.qml
         qml/Examples/DataDisplay/ExpCheckerBoard.qml
         qml/Examples/DataDisplay/ExpTreeView.qml
+        qml/Examples/DataDisplay/ExpSegmented.qml
         qml/Examples/Navigation/ExpMenu.qml
         qml/Examples/Navigation/ExpContextMenu.qml
         qml/Examples/Navigation/ExpScrollBar.qml
@@ -98,7 +103,9 @@ qt_add_qml_module(${PROJECT_NAME}
         qml/Examples/Navigation/ExpBreadcrumb.qml
         qml/Examples/Layout/ExpDivider.qml
         qml/Examples/Layout/ExpSpace.qml
+        qml/Examples/Layout/ExpGroupBox.qml
         qml/Examples/Effect/ExpAcrylic.qml
+        qml/Examples/Effect/ExpLiquidGlass.qml
         qml/Examples/Effect/ExpSwitchEffect.qml
         qml/Examples/Effect/ExpShadow.qml
         qml/Examples/Feedback/ExpWatermark.qml

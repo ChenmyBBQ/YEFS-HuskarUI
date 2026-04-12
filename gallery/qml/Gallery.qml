@@ -19,12 +19,9 @@ HusWindow {
     followThemeSwitch: true
     captionBar.visible: Qt.platform.os === 'windows' || Qt.platform.os === 'linux' || Qt.platform.os === 'osx'
     captionBar.height: captionBar.visible ? 30 : 0
-    captionBar.color: HusTheme.Primary.colorFillTertiary
     captionBar.showThemeButton: true
     captionBar.showTopButton: true
     captionBar.showWinIcon: Qt.platform.os !== 'osx'
-    captionBar.winIconWidth: 22
-    captionBar.winIconHeight: 22
     captionBar.winIconDelegate: Item {
         Image {
             width: 16
@@ -272,7 +269,6 @@ HusWindow {
                 containerLoader.version = data.addVersion || data.updateVersion || '';
                 containerLoader.desc = data.desc || '';
                 containerLoader.tagState = data.state || '';
-                galleryMenu.gotoMenu(data.key);
                 gallerySwitchEffect.switchToSource(data.source);
             }
         }
@@ -292,8 +288,9 @@ HusWindow {
                 themeSwitchLoader.changeDark();
             }
             onAnimationFinished: {
-                if (galleryWindow.specialEffect === HusWindow.None)
+                if (galleryWindow.specialEffect === HusWindow.None) {
                     galleryWindow.color = HusTheme.Primary.colorBgBase;
+                }
                 themeSwitchLoader.active = false;
             }
             Component.onCompleted: {
@@ -495,7 +492,7 @@ HusWindow {
             showEdge: true
             showToolTip: true
             defaultMenuWidth: 300
-            defaultSelectedKey: ['HomePage']
+            defaultSelectedKeys: ['HomePage']
             initModel: galleryGlobal.menus
             menuLabelDelegate: HusText {
                 text: menuButton.text
@@ -596,8 +593,7 @@ HusWindow {
                 iconSource: HusIcon.PlusCircleOutlined
                 visible: HusApp.libName() === 'HuskarUI'
                 onClicked: {
-                    if (!creatorLoader.active)
-                        creatorLoader.active = true;
+                    if (!creatorLoader.active) creatorLoader.active = true;
                     creatorLoader.visible = !creatorLoader.visible;
                 }
 
@@ -619,8 +615,7 @@ HusWindow {
                 iconSize: galleryMenu.defaultMenuIconSize
                 iconSource: HusIcon.UserOutlined
                 onClicked: {
-                    if (!aboutLoader.active)
-                        aboutLoader.active = true;
+                    if (!aboutLoader.active) aboutLoader.active = true;
                     aboutLoader.visible = !aboutLoader.visible;
                 }
 
@@ -642,8 +637,7 @@ HusWindow {
                 iconSize: galleryMenu.defaultMenuIconSize
                 iconSource: HusIcon.SettingOutlined
                 onClicked: {
-                    if (!settingsLoader.active)
-                        settingsLoader.active = true;
+                    if (!settingsLoader.active) settingsLoader.active = true;
                     settingsLoader.visible = !settingsLoader.visible;
                 }
 

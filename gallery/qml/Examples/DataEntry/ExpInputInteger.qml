@@ -29,7 +29,7 @@ Flickable {
 \n### 支持的属性：\n
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
-animationEnabled | bool | true | 是否开启动画
+animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
 active | bool | - | 是否处于激活状态
 showShadow | bool | false | 是否显示阴影
 type | enum | HusInput.Type_Outlined | 输入框形态类型(来自 HusInput)
@@ -80,8 +80,8 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 - \`getFullText(): string\` 获取完整输入文本 \n
 以下函数来自 \`TextInput\`，具体请查阅官方文档：\n
 - \`select(start: int, end: int)\` \n
-- \`selectAll(start: int, end: int)\` \n
-- \`selectWord(start: int, end: int)\` \n
+- \`selectAll()\` \n
+- \`selectWord()\` \n
 - \`clear()\` \n
 - \`copy()\` \n
 - \`cut()\` \n
@@ -109,7 +109,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('基本')
             desc: qsTr(`
 数字输入框。\n
@@ -237,7 +236,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('前置/后置标签')
             desc: qsTr(`
 用于配置一些固定组合。\n
@@ -393,7 +391,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('格式化展示')
             desc: qsTr(`
 通过 \`formatter\` 格式化数值为字符串，以展示具有具体含义的数据，往往需要配合 \`parser\` 一起使用。\n
@@ -447,7 +444,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('前缀/后缀')
             desc: qsTr(`
 通过 \`prefix\` / \`suffix\` 属性设置前缀/后缀字符串(或图标)。\n
@@ -518,7 +514,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('鼠标滚轮')
             desc: qsTr(`
 通过 \`useWheel\` 属性设置是否使用鼠标滚轮控制。\n
@@ -567,7 +562,6 @@ input | [HusInput](internal://HusInput) | - | 访问内部输入框
 
         CodeBox {
             width: parent.width
-            async: false
             descTitle: qsTr('键盘行为')
             desc: qsTr(`
 通过 \`useKeyboard\` 属性设置是否使用键盘控制。\n

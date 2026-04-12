@@ -34,13 +34,14 @@
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
 animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
-options | list | [] | 选项模型列表
+options | array | [] | 选项模型列表
 filterOption | function | - | 输入项将使用该函数进行筛选
 text | string | '' | 当前输入文本
 prefix | string | '' | 前缀文本
 suffix | string | '' | 后缀文本
 genDefaultKey | bool | true | 是否生成默认键(如果没有给定key则为label)
-selectedKeys | list | [] | 选中项的键
+defaultSelectedKeys | array | [] | 默认选中的键数组
+selectedKeys | array | [] | 选中项的键
 searchEnabled | bool | true | 是否启用搜索
 tagCount | int(readonly) | 0 | 当前(选择)标签数量
 maxTagCount | int | -1 | 最多显示多少个标签(-1无限制)
@@ -51,11 +52,25 @@ radiusTagBg | [HusRadius](../General/HusRadius.md) | - | 标签圆角
 
 <br/>
 
+### 模型{options}支持的属性：
+
+属性名 | 类型 | 可选/必选 | 描述
+------ | --- | :---: | ---
+label | string | 必选 | 本选择项的标签
+value | var | 可选 | 本选择项的值
+enabled | bool | 可选 | 本选择项是否启用
+
+<br/>
+
 ### 支持的函数：
 
-- `findKey(key: string)` 查找 `key` 处的选项数据 
+- `findKey(key: string): var` 查找 `key` 处的选项数据 
 
 - `filter()` 过滤选项列表 
+
+- `insertTag(index: int, key: string)` 插入键为 `key` 的标签到 `index` 处(必须是 `options` 中的数据) 
+
+- `appendTag(key: string)` 在末尾添加键为 `key` 的标签(必须是 `options` 中的数据) 
 
 - `removeTagAtKey(key: string)` 删除 `key` 处的标签 
 
@@ -78,11 +93,11 @@ radiusTagBg | [HusRadius](../General/HusRadius.md) | - | 标签圆角
 
   - `input` 输入文本
 
-- `select(option: var)` 选择补全项时发出
+- `select(option: var)` 选择标签项时发出
 
   - `option` 选择的选项
 
-- `removeTag(option: var)` 删除标签项时发出
+- `deselect(option: var)` 删除标签项时发出
 
   - `option` 删除的选项
 
@@ -198,7 +213,7 @@ Row {
             { value: 'jack', label: 'Jack' },
             { value: 'lucy', label: 'Lucy' },
             { value: 'Yiminghe', label: 'yiminghe' },
-            { value: 'disabled', label: 'Disabled', disabled: true },
+            { value: 'disabled', label: 'Disabled', enabled: false },
         ]
     }
 
@@ -209,7 +224,7 @@ Row {
             { value: 'jack', label: 'Jack' },
             { value: 'lucy', label: 'Lucy' },
             { value: 'Yiminghe', label: 'yiminghe' },
-            { value: 'disabled', label: 'Disabled', disabled: true },
+            { value: 'disabled', label: 'Disabled', enabled: false },
         ]
     }
 
@@ -220,7 +235,7 @@ Row {
             { value: 'jack', label: 'Jack' },
             { value: 'lucy', label: 'Lucy' },
             { value: 'Yiminghe', label: 'yiminghe' },
-            { value: 'disabled', label: 'Disabled', disabled: true },
+            { value: 'disabled', label: 'Disabled', enabled: false },
         ]
     }
 
@@ -231,7 +246,7 @@ Row {
             { value: 'jack', label: 'Jack' },
             { value: 'lucy', label: 'Lucy' },
             { value: 'Yiminghe', label: 'yiminghe' },
-            { value: 'disabled', label: 'Disabled', disabled: true },
+            { value: 'disabled', label: 'Disabled', enabled: false },
         ]
     }
 }
@@ -259,7 +274,7 @@ HusMultiSelect {
         filteredOptions = theOptions.filter((o) => !selectedKeys.includes(o));
         options = filteredOptions.map((item) => ({ label: item }));
     }
-    onRemoveTag: {
+    onDeselect: {
         filteredOptions = theOptions.filter((o) => !selectedKeys.includes(o));
         options = filteredOptions.map((item) => ({ label: item }));
     }
@@ -351,7 +366,7 @@ Loader {
             const list = [];
             for (let i = 0; i < 100000; i++) {
                 const label = `\${i.toString(36)}\${i}`;
-                list.push({ key: label, label: label, disabled: i === 10 });
+                list.push({ key: label, label: label, enabled: i % 10 !== 0 });
             }
             options = list;
         }

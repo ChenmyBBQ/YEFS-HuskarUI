@@ -58,7 +58,7 @@ T.Control {
     property int defaultMenuTopPadding: 10
     property int defaultMenuBottomPadding: 10
     property int defaultMenuSpacing: 4
-    property var defaultSelectedKey: []
+    property var defaultSelectedKeys: []
     property string selectedKey: ''
     property var initModel: []
     property HusRadius radiusMenuBg: HusRadius { all: themeSource.radiusMenuBg }
@@ -184,41 +184,40 @@ T.Control {
         }
     }
 
-    function gotoMenu(key) {
+    function gotoMenu(key: string) {
         __private.gotoMenuKey = key;
         __private.gotoMenu(key);
     }
 
-    function get(index) {
+    function get(index: int): var {
         if (index >= 0 && index < __listView.model.length) {
             return __listView.model[index];
         }
         return undefined;
     }
 
-    function set(index, object) {
+    function set(index: int, object: var) {
         if (index >= 0 && index < __listView.model.length) {
-            __listView.model[index] = object;
-            __listView.modelChanged();
+            __listView.model[index] = object; 
         }
     }
 
-    function setProperty(index, propertyName, value) {
+    function setProperty(index: int, propertyName: string, value: var) {
         if (index >= 0 && index < __listView.model.length) {
             __listView.model[index][propertyName] = value;
             __listView.modelChanged();
         }
     }
 
-    function setData(key, data) {
+    function setData(key: string, data: var) {
         __private.setData(key, data);
     }
 
-    function setDataProperty(key, propertyName, value) {
+    function setDataProperty(key: string, propertyName: string, value: var) {
         __private.setDataProperty(key, propertyName, value);
     }
 
-    function move(from, to, count = 1) {
+    function move(from: int, to: int, count = 1) {
         if (from >= 0 && from < __listView.model.length && to >= 0 && to < __listView.model.length) {
             const objects = __listView.model.splice(from, count);
             __listView.model.splice(to, 0, ...objects);
@@ -226,17 +225,17 @@ T.Control {
         }
     }
 
-    function insert(index, object) {
+    function insert(index: int, object: var) {
         __listView.model.splice(index, 0, object);
         __listView.modelChanged();
     }
 
-    function append(object) {
+    function append(object: var) {
         __listView.model.push(object);
         __listView.modelChanged();
     }
 
-    function remove(index, count = 1) {
+    function remove(index: int, count = 1) {
         if (index >= 0 && index < __listView.model.length) {
             __listView.model.splice(index, count);
             __listView.modelChanged();
@@ -327,10 +326,6 @@ T.Control {
         property var contentDelegate: null
         property var bgDelegate: null
 
-        onClicked: {
-            if (showExpanded)
-                expanded = !expanded;
-        }
         hoverCursorShape: (isGroup && !control.compactMode !== HusMenu.Mode_Relaxed) ? Qt.ArrowCursor : Qt.PointingHandCursor
         animationEnabled: control.animationEnabled
         effectEnabled: false
@@ -399,8 +394,8 @@ T.Control {
                     for (let i = 0; i < menuChildren.length; i++) {
                         __childrenListView.model.push(menuChildren[i]);
                     }
-                    if (control.defaultSelectedKey.length != 0) {
-                        if (control.defaultSelectedKey.indexOf(menuKey) != -1) {
+                    if (control.defaultSelectedKeys.length !== 0) {
+                        if (control.defaultSelectedKeys.indexOf(menuKey) !== -1) {
                             __rootItem.expandParent();
                             __menuButton.clicked();
                         }
@@ -457,6 +452,7 @@ T.Control {
                 /*! 根菜单返回自身 */
                 return __rootItem;
             }
+
             /*! 展开当前菜单的所有父菜单 */
             function expandParent() {
                 let parent = parentMenu;
@@ -469,6 +465,7 @@ T.Control {
                     parent = parent.parentMenu;
                 }
             }
+
             /*! 清除当前菜单的所有子菜单 */
             function clearIsCurrentParent() {
                 isCurrentParent = false;
@@ -478,6 +475,7 @@ T.Control {
                         item.clearIsCurrentParent();
                 }
             }
+
             /*! 选中当前菜单的所有父菜单 */
             function selectedCurrentParentMenu() {
                 for (let i = 0; i < __listView.count; i++) {
@@ -499,7 +497,7 @@ T.Control {
                 enabled: __rootItem.menuKey !== ''
                 ignoreUnknownSignals: true
 
-                function onGotoMenu(key) {
+                function onGotoMenu(key: string) {
                     if (__rootItem.menuKey === key) {
                         __rootItem.expandParent();
                         __menuButton.clicked();
@@ -581,15 +579,16 @@ T.Control {
                     contentDelegate: __rootItem.menuContentDelegate
                     bgDelegate: __rootItem.menuBgDelegate
                     onClicked: {
-                        if (__rootItem.menuChildrenLength == 0) {
-                            if (__private.selectedItem != __rootItem) {
-                                __private.selectedItem = __rootItem;
-                                control.selectedKey = __rootItem.menuKey;
-                                __rootItem.selectedCurrentParentMenu();
-                                if (control.compactMode !== HusMenu.Mode_Relaxed || control.popupMode)
-                                    __rootItem.layerPopup.closeWithParent();
-                                __rootItem.clickMenu();
-                            }
+                        if (showExpanded) {
+                            expanded = !expanded;
+                        }
+                        if (__rootItem.menuChildrenLength === 0) {
+                            __private.selectedItem = __rootItem;
+                            control.selectedKey = __rootItem.menuKey;
+                            __rootItem.selectedCurrentParentMenu();
+                            if (control.compactMode !== HusMenu.Mode_Relaxed || control.popupMode)
+                                __rootItem.layerPopup.closeWithParent();
+                            __rootItem.clickMenu();
                         } else {
                             if (control.compactMode !== HusMenu.Mode_Relaxed || control.popupMode) {
                                 const h = __rootItem.layerPopup.topPadding +

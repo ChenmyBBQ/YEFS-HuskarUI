@@ -35,7 +35,7 @@ T.Control {
     property bool showQuickJumper: false
     property int currentPageIndex: 0
     property int total: 0
-    property int pageTotal: pageSize > 0 ? Math.ceil(total / pageSize) : 0
+    readonly property int pageTotal: pageSize > 0 ? Math.ceil(total / pageSize) : 0
     property int pageButtonMaxCount: 7
     property int pageSize: 10
     property var pageSizeModel: []
@@ -48,13 +48,13 @@ T.Control {
     property Component prevButtonDelegate: ActionButton {
         iconSource: HusIcon.LeftOutlined
         tooltipText: control.prevButtonTooltip
-        disabled: control.currentPageIndex == 0
+        disabled: control.currentPageIndex === 0
         onClicked: control.gotoPrevPage();
     }
     property Component nextButtonDelegate: ActionButton {
         iconSource: HusIcon.RightOutlined
         tooltipText: control.nextButtonTooltip
-        disabled: control.currentPageIndex == (control.pageTotal - 1)
+        disabled: control.currentPageIndex === (control.pageTotal - 1)
         onClicked: control.gotoNextPage();
     }
     property Component quickJumperDelegate: Row {
@@ -112,7 +112,7 @@ T.Control {
     }
 
     function gotoNextPage() {
-        if (currentPageIndex < pageTotal)
+        if (currentPageIndex < pageTotal - 1)
             currentPageIndex++;
     }
 
@@ -123,10 +123,15 @@ T.Control {
             currentPageIndex = pageTotal - 1;
     }
 
+    onPageTotalChanged: {
+        if (currentPageIndex >= pageTotal) {
+            currentPageIndex = pageTotal === 0 ? 0 : (pageTotal - 1);
+        }
+    }
     onPageSizeChanged: {
         const __pageTotal = (pageSize > 0 ? Math.ceil(total / pageSize) : 0);
-        if (currentPageIndex > __pageTotal) {
-            currentPageIndex = __pageTotal - 1;
+        if (currentPageIndex >= __pageTotal) {
+            currentPageIndex = __pageTotal === 0 ? 0 : (__pageTotal - 1);
         }
     }
     Component.onCompleted: currentPageIndexChanged();

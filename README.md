@@ -56,6 +56,7 @@ English | [中文](./README-zh_CN.md)
 - 🎨 Powerful theme customization system.
 - 💻 Based on Qml, completely cross platform.
 - 🔧 Highly flexible delegate based component customization.
+- 🤖 AI-assisted development support.
 
 ## 🗺️ Roadmap
 
@@ -63,12 +64,27 @@ The development plan can be found here: [Component Roadmap](https://github.com/m
 
 Anyone can discuss through issues, QQ groups, or WeChat groups, and ultimately meaningful components/functions will be added to the development plan.
 
-## 🔖 Document
+## 🤖 AI Agent Assisted Development
+
+> [!Note]
+> # Intelligent agent skills
+>This warehouse provides two intelligent agent skills:
+> - **`huskarui`**：: Use Python to query the documentation, properties, and examples of HuskarUI components from the repository metadata.
+> - **`qmlpreview`**：: Use ` qmlscene ` to preview the currently edited QML file and capture a screenshot of the run to the clipboard.
+> 
+> They are designed specifically for AI Agent programming tools such as Claude Code and Codex. It can help you:
+> - Quickly query component documents and properties
+> - Obtain scenario based development examples
+> - Automatically iterate and preview code
+
+👉 See [AI Agent Skill Guide](./agent/README.md) for more details.
+
+## 🔖 Online Document
 
 - [Component Document](./docs/index.md)
 
-## 🌐 Online wiki
-- [HuskarUI Online wiki (AI)](https://deepwiki.com/mengps/HuskarUI)
+## 🌐 Online Wiki
+- [HuskarUI Online Wiki (AI)](https://deepwiki.com/mengps/HuskarUI)
 
 ## 📺 Online Demo
 

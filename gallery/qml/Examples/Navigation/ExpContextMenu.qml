@@ -26,8 +26,8 @@ Flickable {
 \n### 支持的属性：\n
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
-animationEnabled | bool | true | 是否开启动画
-initModel | list | [] | 初始菜单模型
+animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
+initModel | array | [] | 初始菜单模型
 showToolTip | bool | false | 是否显示工具提示
 defaultMenuIconSize | int | - | 默认菜单图标大小
 defaultMenuIconSpacing | int | 8 | 默认菜单图标间隔

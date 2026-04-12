@@ -209,9 +209,6 @@ Rectangle {
         }
     }
 
-    objectName: '__HusCaptionBar__'
-    color: 'transparent'
-
     function addInteractionItem(item) {
         if (windowAgent)
             windowAgent.setHitTestVisible(item, true);
@@ -221,6 +218,9 @@ Rectangle {
         if (windowAgent)
             windowAgent.setHitTestVisible(item, false);
     }
+
+    objectName: '__HusCaptionBar__'
+    color: HusTheme.Primary.colorFillTertiary
 
     RowLayout {
         id: __row
@@ -262,6 +262,8 @@ Rectangle {
 
                     Loader {
                         id: __winIconLoader
+                        width: 22
+                        height: Math.min(parent.height, 22)
                         anchors.verticalCenter: parent.verticalCenter
                         sourceComponent: control.winIconDelegate
                     }

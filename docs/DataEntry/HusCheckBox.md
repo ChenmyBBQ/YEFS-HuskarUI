@@ -29,6 +29,7 @@ animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
 effectEnabled | bool | true | 是否开启点击效果
 hoverCursorShape | int | Qt.PointingHandCursor | 悬浮时鼠标形状(来自 Qt.*Cursor)
 indicatorSize | int | 18 | 指示器大小
+elide | enum | Text.ElideNone | 设置文本的elide属性(参考Text文档)
 colorText | color | - | 文本颜色
 colorIndicator | color | - | 指示器颜色
 colorIndicatorBorder | color | - | 指示器边框颜色
@@ -50,28 +51,46 @@ contentDescription | string | '' | 内容描述(提高可用性)
 import QtQuick
 import HuskarUI.Basic
 
-Row {
-    spacing: 10
+Column {
+    spacing: 15
 
-    HusCheckBox {
-        text: qsTr('Checkbox')
+    HusRadioBlock {
+        id: sizeHintRadio
+        initCheckedIndex: 1
+        model: [
+            { label: 'Small', value: 'small' },
+            { label: 'Normal', value: 'normal' },
+            { label: 'Large', value: 'large' },
+        ]
     }
 
-    HusCheckBox {
-        text: qsTr('Disabled')
-        enabled: false
-    }
+    Row {
+        spacing: 10
 
-    HusCheckBox {
-        text: qsTr('Disabled')
-        checkState: Qt.PartiallyChecked
-        enabled: false
-    }
+        HusCheckBox {
+            text: qsTr('Checkbox')
+            sizeHint: sizeHintRadio.currentCheckedValue
+        }
 
-    HusCheckBox {
-        text: qsTr('Disabled')
-        checkState: Qt.Checked
-        enabled: false
+        HusCheckBox {
+            text: qsTr('Disabled')
+            enabled: false
+            sizeHint: sizeHintRadio.currentCheckedValue
+        }
+
+        HusCheckBox {
+            text: qsTr('Disabled')
+            checkState: Qt.PartiallyChecked
+            enabled: false
+            sizeHint: sizeHintRadio.currentCheckedValue
+        }
+
+        HusCheckBox {
+            text: qsTr('Disabled')
+            checkState: Qt.Checked
+            enabled: false
+            sizeHint: sizeHintRadio.currentCheckedValue
+        }
     }
 }
 ```

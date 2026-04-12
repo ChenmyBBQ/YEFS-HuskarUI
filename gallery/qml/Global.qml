@@ -119,6 +119,20 @@ QtObject {
                     source: './Examples/General/ExpLabel.qml',
                     addVersion: '0.5.6.0',
                     desc: qsTr('自带背景和圆角的文本。')
+                },
+                {
+                    key: 'HusFrame',
+                    label: qsTr('HusFrame 框架'),
+                    source: './Examples/General/ExpFrame.qml',
+                    addVersion: '0.5.9.0',
+                    desc: qsTr('逻辑控件组的视觉框架。')
+                },
+                {
+                    key: 'HusPage',
+                    label: qsTr('HusPage 页面'),
+                    source: './Examples/General/ExpPage.qml',
+                    addVersion: '0.5.9.0',
+                    desc: qsTr('自导页眉和页脚项的基础页面。')
                 }
             ]
         },
@@ -139,6 +153,13 @@ QtObject {
                     source: './Examples/Layout/ExpSpace.qml',
                     addVersion: '0.5.6.0',
                     desc: qsTr('布局并设置组件之间的间距/圆角。')
+                },
+                {
+                    key: 'HusGroupBox',
+                    label: qsTr('HusGroupBox 分组框'),
+                    source: './Examples/Layout/ExpGroupBox.qml',
+                    addVersion: '0.6.0',
+                    desc: qsTr('在一个有标题的视觉框架内将一组逻辑控件布局在一起。')
                 },
             ]
         },
@@ -243,7 +264,8 @@ QtObject {
                     key: 'HusCheckBox',
                     label: qsTr('HusCheckBox 多选框'),
                     source: './Examples/DataEntry/ExpCheckBox.qml',
-                    desc: qsTr('收集用户的多项选择。')
+                    updateVersion: '0.5.6.2',
+                    desc: qsTr('新增 sizeHint 尺寸提示。')
                 },
                 {
                     key: 'HusAutoComplete',
@@ -255,8 +277,8 @@ QtObject {
                     key: 'HusMultiSelect',
                     label: qsTr('HusMultiSelect 多选器'),
                     source: './Examples/DataEntry/ExpMultiSelect.qml',
-                    addVersion: '0.4.3',
-                    desc: qsTr('多选器，可多选的下拉选择器。'),
+                    updateVersion: '0.5.6.2',
+                    desc: qsTr('新增 defaultSelectedKeys 属性。\n新增 insertTag()/appendTag() 接口。'),
                 },
                 {
                     key: 'HusDateTimePicker',
@@ -269,21 +291,21 @@ QtObject {
                     key: 'HusTextArea',
                     label: qsTr('HusTextArea 文本域'),
                     source: './Examples/DataEntry/ExpTextArea.qml',
-                    addVersion: '0.5.0',
+                    updateVersion: '0.5.0',
                     desc: qsTr('新增 scrollToBeginning() / scrollToEnd()。')
                 },
                 {
                     key: 'HusInputInteger',
                     label: qsTr('HusInputInteger 整数输入框'),
                     source: './Examples/DataEntry/ExpInputInteger.qml',
-                    addVersion: '0.5.6.1',
+                    updateVersion: '0.5.6.1',
                     desc: qsTr('新增 sizeHint 尺寸提示。\n新增 type 形态类型。\n新增 showShadow/colorShadow 阴影相关。')
                 },
                 {
                     key: 'HusInputNumber',
                     label: qsTr('HusInputNumber 数字输入框'),
                     source: './Examples/DataEntry/ExpInputNumber.qml',
-                    addVersion: '0.5.6.1',
+                    updateVersion: '0.5.6.1',
                     desc: qsTr('新增 sizeHint 尺寸提示。\n新增 type 形态类型。\n新增 showShadow/colorShadow 阴影相关。')
                 },
                 {
@@ -306,6 +328,20 @@ QtObject {
                     source: './Examples/DataEntry/ExpDateTimePickerPanel.qml',
                     addVersion: '0.5.4',
                     desc: qsTr('非弹出式的日期时间选择面板。')
+                },
+                {
+                    key: 'HusTransfer',
+                    label: qsTr('HusTransfer 穿梭框'),
+                    source: './Examples/DataEntry/ExpTransfer.qml',
+                    addVersion: '0.5.7',
+                    desc: qsTr('双栏穿梭选择框。')
+                },
+                {
+                    key: 'HusMultiCheckBox',
+                    label: qsTr('HusMultiCheckBox 多复选框选择器'),
+                    source: './Examples/DataEntry/ExpMultiCheckBox.qml',
+                    addVersion: '0.6.0',
+                    desc: qsTr('下拉多复选框选择器。'),
                 },
             ]
         },
@@ -338,14 +374,15 @@ QtObject {
                     key: 'HusTabView',
                     label: qsTr('HusTabView 标签页'),
                     source: './Examples/DataDisplay/ExpTabView.qml',
-                    updateVersion: '0.4.9.1',
-                    desc: qsTr('新增 closeTabCallback() 关闭标签回调。')
+                    updateVersion: '0.5.9.0',
+                    desc: qsTr('新增 initModel.contentDelegate 模型内容代理。\n新增 tabAlign 标签文本对齐。\n新增 defaultTab[Left/Right]Padding 标签左右填充。\n新增 color* 一些颜色属性。')
                 },
                 {
                     key: 'HusCollapse',
                     label: qsTr('HusCollapse 折叠面板'),
                     source: './Examples/DataDisplay/ExpCollapse.qml',
-                    desc: qsTr('可以折叠/展开的内容区域。')
+                    updateVersion: '0.5.9.0',
+                    desc: qsTr('新增 initModel.contentDelegate 模型内容代理。')
                 },
                 {
                     key: 'HusAvatar',
@@ -376,8 +413,8 @@ QtObject {
                     key: 'HusTableView',
                     label: qsTr('HusTableView 表格'),
                     source: './Examples/DataDisplay/ExpTableView.qml',
-                    updateVersion: '0.4.8.1',
-                    desc: qsTr('新增 getCellData 获取单元数据。\n新增 setCellData 设置单元数据。')
+                    updateVersion: '0.6.0',
+                    desc: qsTr('新增 setColumnVisible() 设置指定列是否可见。')
                 },
                 {
                     key: 'HusBadge',
@@ -437,8 +474,15 @@ QtObject {
                     key: 'HusTreeView',
                     label: qsTr('HusTreeView 树视图'),
                     source: './Examples/DataDisplay/ExpTreeView.qml',
-                    addVersion: '0.5.3',
-                    desc: qsTr('多层次的结构列表。')
+                    updateVersion: '0.5.6.2',
+                    desc: qsTr('新增 forceUpdateCheckState/nodeIconFont/colorNodeIcon。')
+                },
+                {
+                    key: 'HusSegmented',
+                    label: qsTr('HusSegmented 分段控制器'),
+                    source: './Examples/DataDisplay/ExpSegmented.qml',
+                    addVersion: '0.5.9.0',
+                    desc: qsTr('用于展示多个选项并允许用户选择其中单个选项。')
                 },
             ]
         },
@@ -452,6 +496,13 @@ QtObject {
                     label: qsTr('HusAcrylic 亚克力效果'),
                     source: './Examples/Effect/ExpAcrylic.qml',
                     desc: qsTr('使用 HusAcrylic 可以轻松实现亚克力/毛玻璃效果。')
+                },
+                {
+                    key: 'HusLiquidGlass',
+                    label: qsTr('HusLiquidGlass 液态玻璃效果'),
+                    source: './Examples/Effect/ExpLiquidGlass.qml',
+                    addVersion: '0.5.8',
+                    desc: qsTr('液态玻璃/折射效果，支持折射、磨砂、斜面深度、镜面高光等参数。')
                 },
                 {
                     key: 'HusSwitchEffect',

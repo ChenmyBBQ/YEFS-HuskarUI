@@ -31,7 +31,8 @@ T.CheckBox {
     property bool animationEnabled: HusTheme.animationEnabled
     property bool effectEnabled: true
     property int hoverCursorShape: Qt.PointingHandCursor
-    property int indicatorSize: 18
+    property int indicatorSize: 18 * sizeRatio
+    property int elide: Text.ElideNone
     property color colorText: enabled ? themeSource.colorText : themeSource.colorTextDisabled
     property color colorIndicator: {
         if (enabled) {
@@ -46,23 +47,28 @@ T.CheckBox {
                                                                     themeSource.colorIndicatorBorder : themeSource.colorIndicatorDisabled
     property HusRadius radiusIndicator: HusRadius { all: themeSource.radiusIndicator }
     property string contentDescription: ''
+    property string sizeHint: 'normal'
+    property real sizeRatio: HusTheme.sizeHint[sizeHint]
     property var themeSource: HusTheme.HusCheckBox
 
-    Behavior on colorText { enabled: control.animationEnabled; ColorAnimation { duration: HusTheme.Primary.durationMid } }
-    Behavior on colorIndicator { enabled: control.animationEnabled; ColorAnimation { duration: HusTheme.Primary.durationMid } }
+    Behavior on colorText { enabled: control.animationEnabled; ColorAnimation { duration: HusTheme.Primary.durationFast } }
+    Behavior on colorIndicator { enabled: control.animationEnabled; ColorAnimation { duration: HusTheme.Primary.durationFast } }
     Behavior on colorIndicatorBorder { enabled: control.animationEnabled; ColorAnimation { duration: HusTheme.Primary.durationFast } }
 
     objectName: '__HusCheckBox__'
     implicitWidth: implicitContentWidth + leftPadding + rightPadding
     implicitHeight: Math.max(implicitContentHeight, implicitIndicatorHeight) + topPadding + bottomPadding
-    font.family: themeSource.fontFamily
-    font.pixelSize: parseInt(themeSource.fontSize)
-    spacing: 6
+    font {
+        family: themeSource.fontFamily
+        pixelSize: parseInt(themeSource.fontSize) * sizeRatio
+    }
+    spacing: 6 * sizeRatio
     indicator: Item {
-        x: control.leftPadding
+        x: control.text ? (control.mirrored ? control.width - width - control.rightPadding : control.leftPadding) :
+                          control.leftPadding + (control.availableWidth - width) / 2
+        y: control.topPadding + (control.availableHeight - height) / 2
         implicitWidth: __bg.width
         implicitHeight: __bg.height
-        anchors.verticalCenter: parent.verticalCenter
 
         HusRectangleInternal {
             id: __effect
@@ -244,18 +250,15 @@ T.CheckBox {
         }
     }
     contentItem: HusText {
+        leftPadding: control.indicator && !control.mirrored ? (control.indicator.width + spacing) : 0
+        rightPadding: control.indicator && control.mirrored ? (control.indicator.width + spacing) : 0
         text: control.text
         font: control.font
         color: control.colorText
+        elide: control.elide
         verticalAlignment: Text.AlignVCenter
-        leftPadding: control.indicator.width + (text.length > 0 ? control.spacing : 0)
-
-        Behavior on color {
-            enabled: control.animationEnabled
-            ColorAnimation { duration: HusTheme.Primary.durationMid }
-        }
+        property real spacing: (text.length > 0 ? control.spacing : 0)
     }
-    background: Item { }
 
     HoverHandler {
         cursorShape: control.hoverCursorShape

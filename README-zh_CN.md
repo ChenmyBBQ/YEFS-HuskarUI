@@ -56,6 +56,7 @@ Qt Qml 的 Ant 设计组件库
 - 🎨 强大的主题定制系统.
 - 💻 基于Qml，完全跨平台.
 - 🔧 高度灵活的基于委托的组件定制.
+- 🤖 AI 辅助开发支持.
 
 ## 🗺️ 路线图
 
@@ -63,12 +64,27 @@ Qt Qml 的 Ant 设计组件库
 
 任何人都可以通过 issue/qq群/wx群 进行讨论, 最终有意义的组件/功能将添加到开发计划.
 
-## 🔖 文档
+## 🤖 AI Agent 辅助开发
+
+> [!Note]
+> # 智能体技能
+> 本仓库提供了两个智能体技能：
+> - **`huskarui`**：通过 Python 从仓库元数据中查询 HuskarUI 组件的文档、属性和示例。
+> - **`qmlpreviewer`**：使用 `qmlscene` 预览当前编辑的 QML文件，并捕获运行截图到剪贴板。
+> 
+> 它们专为 Claude Code、Codex 等 AI Agent 编程工具设计。它可以帮助你：
+> - 快速查询组件文档和属性
+> - 获取场景化的开发示例
+> - 自动迭代并预览代码
+
+👉 查看 [AI Agent 技能使用指南](./agent/README-zh_CN.md) 了解更多。
+
+## 🔖 在线文档
 
 - [组件文档](./docs/index.md)
 
-## 🌐 在线 wiki
-- [HuskarUI 在线 wiki (AI)](https://deepwiki.com/mengps/HuskarUI)
+## 🌐 在线 Wiki
+- [HuskarUI 在线 Wiki (AI)](https://deepwiki.com/mengps/HuskarUI)
 
 ## 📺 在线演示
 

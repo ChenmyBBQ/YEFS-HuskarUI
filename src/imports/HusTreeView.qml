@@ -44,14 +44,15 @@ T.Control {
     property bool checkable: false
     property bool blockNode: false
     property bool genDefaultKey: true
+    property bool forceUpdateCheckState: false
     property real indent: 18
     property bool showIcon: false
     property int defaultNodeIconSize: 16
     property bool showLine: false
     property int lineStyle: HusTreeView.SolidLine
-    property real lineWidth: 1
+    property real lineWidth: 1 / Screen.devicePixelRatio
     property list<real> dashPattern: [4, 4]
-    property var switcherIconSouce: HusIcon.CaretRightOutlined ?? ''
+    property var switcherIconSource: HusIcon.CaretRightOutlined ?? ''
     property int switcherIconSize: 12
     property alias rowSpacing: __treeView.rowSpacing
     property var defaultCheckedKeys: []
@@ -59,7 +60,12 @@ T.Control {
     property string selectedKey: ''
     property var initModel: []
     property alias titleFont: control.font
+    property font nodeIconFont: Qt.font({
+                                            family: 'HuskarUI-Icons',
+                                            pixelSize: defaultNodeIconSize
+                                        })
     property color colorLine: themeSource.colorLine
+    property color colorNodeIcon: themeSource.colorNodeIcon
     property HusRadius radiusSwitcherBg: HusRadius { all: themeSource.radiusSwitcherBg }
     property HusRadius radiusTitleBg: HusRadius { all: themeSource.radiusTitleBg }
     property string contentDescription: ''
@@ -84,7 +90,7 @@ T.Control {
 
         HusIconText {
             anchors.centerIn: parent
-            iconSource: control.switcherIconSouce
+            iconSource: control.switcherIconSource
             iconSize: control.switcherIconSize
             verticalAlignment: Text.AlignVCenter
             rotation: isExpanded ? 90 : 0
@@ -145,8 +151,10 @@ T.Control {
                 visible: active
                 sourceComponent: HusIconText {
                     Layout.alignment: Qt.AlignVCenter
+                    font.family: control.nodeIconFont.family
                     iconSource: treeData?.iconSource ?? 0
-                    iconSize: treeData?.iconSize ?? control.defaultNodeIconSize
+                    iconSize: treeData?.iconSize ?? control.nodeIconFont.pixelSize
+                    colorIcon: treeData?.colorNodeIcon ?? control.colorNodeIcon
                 }
             }
 
@@ -217,8 +225,7 @@ T.Control {
     }
 
     function moveNode(fromIndex: var, toIndex: var) {
-        const row = __treeModel.getRow(fromIndex);
-        appendNode(toIndex);
+        appendNode(toIndex, __treeModel.getRow(fromIndex));
         removeNode(fromIndex);
     }
 
@@ -251,8 +258,8 @@ T.Control {
     padding: 4
     spacing: 4
     font {
-        family: control.themeSource.fontFamily
-        pixelSize: parseInt(control.themeSource.fontSize)
+        family: themeSource.fontFamily
+        pixelSize: parseInt(themeSource.fontSize)
     }
     background: Item { }
     contentItem: TreeView {
@@ -459,7 +466,7 @@ T.Control {
             const data = object.__data;
             const nodeTreePath = data.treePath;
             if (isSubNode(rootPath, nodeTreePath)) {
-                if (data.enabled && !data.checkboxDisabled) {
+                if (control.forceUpdateCheckState || (data.enabled && !data.checkboxDisabled)) {
                     /*! 更新模型 */
                     updateModelCheckState(data, nodeTreePath, checkState);
                 } else {
@@ -495,7 +502,7 @@ T.Control {
                 node.rows.forEach(
                             o => {
                                 const data = o.__data;
-                                if (data.enabled && !data.checkboxDisabled) {
+                                if (control.forceUpdateCheckState || (data.enabled && !data.checkboxDisabled)) {
                                     checkableCount++
                                     /*! 计算该节点状态 */
                                     let checkState = Qt.Unchecked;

@@ -30,7 +30,7 @@ HusSelect {
 
     signal search(input: string)
     signal select(option: var)
-    signal removeTag(option: var)
+    signal deselect(option: var)
 
     property var options: []
     property var filterOption: (input, option) => true
@@ -38,12 +38,14 @@ HusSelect {
     property string prefix: ''
     property string suffix: ''
     property bool genDefaultKey: true
+    property var defaultSelectedKeys: []
     property var selectedKeys: []
     property alias searchEnabled: control.editable
     readonly property alias tagCount: __tagListModel.count
     property int maxTagCount: -1
     property int tagSpacing: 5 * sizeRatio
-    property color colorTagText: themeSource.colorTagText
+    property color colorTagText: enabled ? themeSource.colorTagText :
+                                           themeSource.colorTagTextDisabled
     property color colorTagBg: themeSource.colorTagBg
     property HusRadius radiusTagBg: HusRadius { all: themeSource.radiusTagBg }
 
@@ -63,8 +65,8 @@ HusSelect {
         required property int index
         required property var tagData
 
-        implicitWidth: __row.implicitWidth + 16 * sizeRatio
-        implicitHeight: Math.max(__text.implicitHeight, __closeIcon.implicitHeight) + 4 * sizeRatio
+        implicitWidth: __row.implicitWidth + 16 * control.sizeRatio
+        implicitHeight: Math.max(__text.implicitHeight, __closeIcon.implicitHeight) + 4 * control.sizeRatio
         radius: control.radiusTagBg.all
         topLeftRadius: control.radiusTagBg.topLeft
         topRightRadius: control.radiusTagBg.topRight
@@ -79,7 +81,7 @@ HusSelect {
         Row {
             id: __row
             anchors.centerIn: parent
-            spacing: 5 * sizeRatio
+            spacing: 5 * control.sizeRatio
 
             HusText {
                 id: __text
@@ -95,7 +97,7 @@ HusSelect {
                 id: __closeIcon
                 anchors.verticalCenter: parent.verticalCenter
                 colorIcon: __hoverHander.hovered ? control.themeSource.colorTagCloseHover : control.themeSource.colorTagClose
-                iconSize: (parseInt(control.themeSource.fontSize) - 2) * sizeRatio
+                iconSize: (parseInt(control.themeSource.fontSize) - 2) * control.sizeRatio
                 iconSource: HusIcon.CloseOutlined
                 verticalAlignment: Text.AlignVCenter
 
@@ -116,12 +118,26 @@ HusSelect {
         }
     }
 
-    function findKey(key: string) {
-        return __private.getData(key);
+    function findKey(key: string): var {
+        return __private.findKey(key);
     }
 
     function filter() {
         model = options.filter(option => filterOption(text, option) === true);
+    }
+
+    function insertTag(index: int, key: string) {
+        const data = findKey(key);
+        if (data !== undefined) {
+            __private.insert(index, key, data);
+        }
+    }
+
+    function appendTag(key: string) {
+        const data = findKey(key);
+        if (data !== undefined) {
+            __private.append(key, data);
+        }
     }
 
     function removeTagAtKey(key: string) {
@@ -158,6 +174,17 @@ HusSelect {
                         (item, index) => {
                             if (!item.hasOwnProperty('key')) {
                                 item.key = item.label;
+                            }
+                        });
+        }
+        if (defaultSelectedKeys.length > 0) {
+            const keysSet = new Set;
+            defaultSelectedKeys.forEach(key => keysSet.add(key));
+            options.forEach(
+                        item => {
+                            if (item.key && keysSet.has(item.key)) {
+                                __private.append(item.key, item, false);
+                                keysSet.delete(item.key);
                             }
                         });
         }
@@ -325,8 +352,8 @@ HusSelect {
 
                 required property var model
                 required property int index
-                property string key: model.key
-                property bool selected: __private.selectedKeysMap.has(key)
+                readonly property string key: model.key
+                readonly property bool selected: __private.selectedKeysMap.has(key)
 
                 width: __popupListView.width
                 height: implicitContentHeight + topPadding + bottomPadding
@@ -378,12 +405,12 @@ HusSelect {
                 }
                 onClicked: {
                     control.currentIndex = index;
-                    const data = __popupDelegate.model;
+                    const data = __popupDelegate.model.modelData;
                     const key = data.key;
                     if (__private.contains(key)) {
                         __private.remove(key);
                     } else {
-                        __private.insert(key, data);
+                        __private.append(key, data);
                     }
                 }
 
@@ -395,13 +422,11 @@ HusSelect {
                     y: __popupDelegate.height
                     anchors.horizontalCenter: parent.horizontalCenter
                     active: control.showToolTip
-                    sourceComponent: HusToolTip {
-                        showArrow: false
-                        visible: __popupDelegate.hovered
-                        animationEnabled: control.animationEnabled
-                        text: __popupDelegate.model[control.textRole]
-                        position: HusToolTip.Position_Bottom
-                    }
+                    sourceComponent: control.toolTipDelegate
+                    property alias index: __popupDelegate.index
+                    property alias model: __popupDelegate.model
+                    property alias hovered: __popupDelegate.hovered
+                    property alias pressed: __popupDelegate.pressed
                 }
             }
             T.ScrollBar.vertical: HusScrollBar {
@@ -421,20 +446,35 @@ HusSelect {
         }
 
         function clear() {
-            selectedKeysMap.forEach((value, key) => control.removeTag(value));
+            selectedKeysMap.forEach((value, key) => control.deselect(value));
             __tagListModel.clear();
-            selectedKeysMap = new Map;
+            selectedKeysMap.clear();
             selectedKeysMapChanged();
         }
 
-        function insert(key, data) {
-            __tagListModel.append({ '__related__': key, 'tagData': data });
-            selectedKeysMap.set(key, data);
-            selectedKeysMapChanged();
-            control.select(data);
+        function insert(index: int, key: string, data: var, emit = true) {
+            if (!selectedKeysMap.has(key)) {
+                __tagListModel.insert(index, { '__related__': key, 'tagData': data });
+                selectedKeysMap.set(key, data);
+                selectedKeysMapChanged();
+                if (emit) {
+                    control.select(data);
+                }
+            }
         }
 
-        function remove(key) {
+        function append(key: string, data: var, emit = true) {
+            if (!selectedKeysMap.has(key)) {
+                __tagListModel.append({ '__related__': key, 'tagData': data });
+                selectedKeysMap.set(key, data);
+                selectedKeysMapChanged();
+                if (emit) {
+                    control.select(data);
+                }
+            }
+        }
+
+        function remove(key: string, emit = true) {
             for (let i = 0; i < __tagListModel.count; i++) {
                 if (__tagListModel.get(i).__related__ === key) {
                     const relatedKey = __tagListModel.get(i).__related__;
@@ -442,26 +482,32 @@ HusSelect {
                     __tagListModel.remove(i);
                     selectedKeysMap.delete(relatedKey);
                     selectedKeysMapChanged();
-                    control.removeTag(data);
+                    if (emit) {
+                        control.deselect(data);
+                    }
                     break;
                 }
             }
         }
 
-        function removeAtIndex(index) {
+        function removeAtIndex(index: int, emit = true) {
             const relatedKey = __tagListModel.get(index).__related__;
             const data = selectedKeysMap.get(relatedKey);
             __tagListModel.remove(index);
             selectedKeysMap.delete(relatedKey);
             selectedKeysMapChanged();
-            control.removeTag(data);
+            if (emit) {
+                control.deselect(data);
+            }
         }
 
-        function getData(key) {
-            if (selectedKeysMap.has(key)) {
-                return selectedKeysMap.get(key);
+        function findKey(key: string): var {
+            const index = control.options.findIndex(item => item.key === key);
+            if (index === -1) {
+                return undefined;
+            } else {
+                return control.options[index];
             }
-            return undefined;
         }
 
         function updateSelectedKeys() {

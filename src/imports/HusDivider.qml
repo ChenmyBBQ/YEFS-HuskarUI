@@ -50,10 +50,11 @@ Item {
     property int titleAlign: HusDivider.Align_Left
     property int titlePadding: 20
     property int lineStyle: HusDivider.SolidLine
-    property real lineWidth: 1
+    property real lineWidth: 1 / Screen.devicePixelRatio
     property list<real> dashPattern: [4, 2]
     property int orientation: Qt.Horizontal
-    property color colorText: themeSource.colorText
+    property color colorText: enabled ? themeSource.colorText :
+                                        themeSource.colorTextDisabled
     property color colorSplit: themeSource.colorSplit
     property var themeSource: HusTheme.HusDivider
 

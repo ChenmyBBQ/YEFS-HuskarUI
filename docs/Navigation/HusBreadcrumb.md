@@ -40,7 +40,7 @@
 属性名 | 类型 | 默认值 | 描述
 ------ | --- | :---: | ---
 animationEnabled | bool | HusTheme.animationEnabled | 是否开启动画
-initModel | list | [] | 初始模型
+initModel | array | [] | 初始模型
 separator | string | '/' | 默认分隔符
 titleFont | font | - | 路由项标题字体
 defaultIconSize | int | - | 默认图标大小
@@ -71,7 +71,7 @@ menu | object | 可选 | 本路由项菜单
 属性名 | 类型 | 可选/必选 | 描述
 ------ | --- | :---: | ---
 width | string | 可选 | 菜单宽度
-items | list | 可选 | 菜单模型
+items | array | 可选 | 菜单模型
 
 <br/>
 
@@ -105,9 +105,6 @@ items | list | 可选 | 菜单模型
   - `index` 路由项索引
 
   - `data` 路由项数据
-
-
-### 支持的信号：
 
 - `clickMenu(deep: int, key: string, keyPath: var, data: var)` 点击任意路由-菜单项时发出
 
